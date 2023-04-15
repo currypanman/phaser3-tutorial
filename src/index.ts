@@ -1,6 +1,6 @@
 import 'phaser';
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
@@ -16,7 +16,7 @@ const config = {
   }
 };
 
-const game = new Phaser.Game(config);
+const game: Phaser.Game = new Phaser.Game(config);
 
 function preload() {
   this.load.setBaseURL('http://labs.phaser.io');
