@@ -35,6 +35,7 @@ function preload(this: Phaser.Scene) {
 
 function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: Phaser.Physics.Arcade.Sprite) {
   fruit.disableBody();
+  fruit.setInteractive({ draggable: false });
   this.tweens.add({
     targets: fruit,
     scale: 0,
@@ -46,6 +47,7 @@ function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: 
         fruits.children.iterate(fruit => {
           if (fruit instanceof Phaser.Physics.Arcade.Sprite) {
             fruit.enableBody(true, x, 150, true, true);
+            fruit.setInteractive({ draggable: true });
             this.tweens.add({
               targets: fruit,
               scale: 100 / fruit.width,
