@@ -71,13 +71,13 @@ function chooseWhatToEat(scene: Phaser.Scene) {
   }
 }
 
-function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: Phaser.Physics.Arcade.Sprite) {
+function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, scene: Phaser.Scene) {
   if (fruit.name != nextFruit!.name) {
     return;
   }
   fruit.disableBody();
   fruit.setInteractive({ draggable: false });
-  this.tweens.add({
+  scene.tweens.add({
     targets: fruit,
     scale: 0,
     duration: 500,
@@ -89,7 +89,7 @@ function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: 
           if (fruit instanceof Phaser.Physics.Arcade.Sprite) {
             fruit.enableBody(true, x, 150, true, true);
             fruit.setInteractive({ draggable: true });
-            this.tweens.add({
+            scene.tweens.add({
               targets: fruit,
               scale: 100 / fruit.width,
               duration: 250
@@ -99,15 +99,17 @@ function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: 
           return true;
         })
       }
-      chooseWhatToEat(this);
+      chooseWhatToEat(scene);
     }
   });
 }
 
 function create(this: Phaser.Scene) {
+  const scene = this;
   this.add.image(400, 300, 'sky');
 
   const boy = this.physics.add.image(400, 450, 'boy');
+  boy.setInteractive({ dropZone: true });
   boy.scale = 200 / boy.width;
   boy.setCircle(100);
   const fukidashi = this.physics.add.image(260, 400, 'fukidashi');
@@ -122,6 +124,7 @@ function create(this: Phaser.Scene) {
     fruit.setName(asset);
     fruit.setInteractive({ draggable: true });
     fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
+    fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, scene); });
     fruit.scale = 100 / fruit.width;
     fruit.setCircle(50);
     fs.push(fruit);
@@ -129,7 +132,6 @@ function create(this: Phaser.Scene) {
   }
 
   fruits = this.physics.add.group(fs);
-  this.physics.add.overlap(boy, fruits, eatFruit, null, this);
 
   chooseWhatToEat(this);
 }
