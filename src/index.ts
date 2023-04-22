@@ -19,6 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 const game: Phaser.Game = new Phaser.Game(config);
 let fruits: Phaser.Physics.Arcade.Group;
+let nextFruit: Phaser.Physics.Arcade.Sprite | null = null;
 
 function preload(this: Phaser.Scene) {
   this.load.image('sky', 'assets/sky.png');
@@ -31,9 +32,49 @@ function preload(this: Phaser.Scene) {
   this.load.image('kiwi', 'assets/fruit_kiwi_marugoto.png');
 
   this.load.image('boy', 'assets/stand1_front01_boy.png');
+  this.load.image('fukidashi', 'assets/fukidashi.png');
+}
+
+function chooseWhatToEat(scene: Phaser.Scene) {
+
+  function setNextFruit(nextFruitName: string) {
+    nextFruit = scene.physics.add.sprite(250, 350, nextFruitName);
+    nextFruit.name = nextFruitName;
+    nextFruit.scale = 0;
+    scene.tweens.add({
+      targets: nextFruit,
+      scale: 100 / nextFruit.width,
+      duration: 250
+    })
+  }
+
+  let activeFruits: string[] = [];
+  fruits.children.iterate(fruit => {
+    if (fruit.active) {
+      activeFruits.push(fruit.name);
+    }
+    return true;
+  });
+  const nextFruitName = activeFruits[Math.floor(Math.random() * activeFruits.length)];
+
+  if (nextFruit) {
+    scene.tweens.add({
+      targets: nextFruit,
+      scale: 0,
+      duration: 250,
+      onComplete: () => {
+        setNextFruit(nextFruitName);
+      }
+    })
+  } else {
+    setNextFruit(nextFruitName);
+  }
 }
 
 function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: Phaser.Physics.Arcade.Sprite) {
+  if (fruit.name != nextFruit!.name) {
+    return;
+  }
   fruit.disableBody();
   fruit.setInteractive({ draggable: false });
   this.tweens.add({
@@ -58,6 +99,7 @@ function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: 
           return true;
         })
       }
+      chooseWhatToEat(this);
     }
   });
 }
@@ -65,9 +107,11 @@ function eatFruit(this: Phaser.Scene, boy: Phaser.Physics.Arcade.Sprite, fruit: 
 function create(this: Phaser.Scene) {
   this.add.image(400, 300, 'sky');
 
-  const boy = this.physics.add.sprite(400, 450, 'boy');
+  const boy = this.physics.add.image(400, 450, 'boy');
   boy.scale = 200 / boy.width;
   boy.setCircle(100);
+  const fukidashi = this.physics.add.image(260, 400, 'fukidashi');
+  fukidashi.scale = 200 / fukidashi.width;
 
   const assets = ['orange', 'apple', 'strawberry', 'younashi', 'kiwi'];
 
@@ -75,6 +119,7 @@ function create(this: Phaser.Scene) {
   let x = 100;
   for (const asset of assets) {
     const fruit = this.physics.add.sprite(x, 150, asset);
+    fruit.setName(asset);
     fruit.setInteractive({ draggable: true });
     fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
     fruit.scale = 100 / fruit.width;
@@ -85,4 +130,6 @@ function create(this: Phaser.Scene) {
 
   fruits = this.physics.add.group(fs);
   this.physics.add.overlap(boy, fruits, eatFruit, null, this);
+
+  chooseWhatToEat(this);
 }
