@@ -32,6 +32,8 @@ function preload(this: Phaser.Scene) {
   this.load.image('kiwi', 'assets/fruit_kiwi_marugoto.png');
 
   this.load.image('boy', 'assets/stand1_front01_boy.png');
+  this.load.image('mogumogu', 'assets/stand1_front01_boy_mogumogu.png');
+  this.load.image('hungry', 'assets/stand1_front01_boy_hungry.png');
   this.load.image('fukidashi', 'assets/fukidashi.png');
 }
 
@@ -71,10 +73,12 @@ function chooseWhatToEat(scene: Phaser.Scene) {
   }
 }
 
-function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, scene: Phaser.Scene) {
+function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcade.Sprite, scene: Phaser.Scene) {
   if (fruit.name != nextFruit!.name) {
+    boy.anims.play('hungry');
     return;
   }
+  boy.anims.play('mogumogu');
   fruit.disableBody();
   fruit.setInteractive({ draggable: false });
   scene.tweens.add({
@@ -108,10 +112,23 @@ function create(this: Phaser.Scene) {
   const scene = this;
   this.add.image(400, 300, 'sky');
 
-  const boy = this.physics.add.image(400, 450, 'boy');
+  const boy = this.physics.add.sprite(400, 450, 'boy');
   boy.setInteractive({ dropZone: true });
   boy.scale = 200 / boy.width;
   boy.setCircle(100);
+
+  this.anims.create({
+    key: "mogumogu",
+    frames: [{ key: "mogumogu", duration: 1000 }, { key: "boy" }],
+    repeat: 0
+  });
+
+  this.anims.create({
+    key: "hungry",
+    frames: [{ key: "hungry", duration: 1000 }, { key: "boy" }],
+    repeat: 0
+  });
+
   const fukidashi = this.physics.add.image(260, 400, 'fukidashi');
   fukidashi.scale = 200 / fukidashi.width;
 
@@ -124,7 +141,7 @@ function create(this: Phaser.Scene) {
     fruit.setName(asset);
     fruit.setInteractive({ draggable: true });
     fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
-    fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, scene); });
+    fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, boy, scene); });
     fruit.scale = 100 / fruit.width;
     fruit.setCircle(50);
     fs.push(fruit);
