@@ -4,7 +4,7 @@ import { GameObjects } from 'phaser';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 800,
-  height: 600,
+  height: 450,
   physics: {
     default: 'arcade',
     arcade: {
@@ -40,7 +40,7 @@ function preload(this: Phaser.Scene) {
 function chooseWhatToEat(scene: Phaser.Scene) {
 
   function setNextFruit(nextFruitName: string) {
-    nextFruit = scene.physics.add.sprite(250, 350, nextFruitName);
+    nextFruit = scene.physics.add.sprite(250, 250, nextFruitName);
     nextFruit.name = nextFruitName;
     nextFruit.scale = 0;
     scene.tweens.add({
@@ -91,7 +91,7 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
         let x = 100;
         fruits.children.iterate(fruit => {
           if (fruit instanceof Phaser.Physics.Arcade.Sprite) {
-            fruit.enableBody(true, x, 150, true, true);
+            fruit.enableBody(true, x, 100, true, true);
             fruit.setInteractive({ draggable: true });
             scene.tweens.add({
               targets: fruit,
@@ -110,9 +110,11 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
 
 function create(this: Phaser.Scene) {
   const scene = this;
+  scene.scale.scaleMode = Phaser.Scale.FIT;
+  scene.scale.setParentSize(window.innerWidth, window.innerHeight);
   this.add.image(400, 300, 'sky');
 
-  const boy = this.physics.add.sprite(400, 450, 'boy');
+  const boy = this.physics.add.sprite(400, 350, 'boy');
   boy.setInteractive({ dropZone: true });
   boy.scale = 200 / boy.width;
   boy.setCircle(100);
@@ -129,7 +131,7 @@ function create(this: Phaser.Scene) {
     repeat: 0
   });
 
-  const fukidashi = this.physics.add.image(260, 400, 'fukidashi');
+  const fukidashi = this.physics.add.image(260, 300, 'fukidashi');
   fukidashi.scale = 200 / fukidashi.width;
 
   const assets = ['orange', 'apple', 'strawberry', 'younashi', 'kiwi'];
@@ -137,7 +139,7 @@ function create(this: Phaser.Scene) {
   let fs = [];
   let x = 100;
   for (const asset of assets) {
-    const fruit = this.physics.add.sprite(x, 150, asset);
+    const fruit = this.physics.add.sprite(x, 100, asset);
     fruit.setName(asset);
     fruit.setInteractive({ draggable: true });
     fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
