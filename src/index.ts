@@ -36,6 +36,8 @@ function preload(this: Phaser.Scene) {
   this.load.image('mogumogu', 'assets/stand1_front01_boy_mogumogu.png');
   this.load.image('hungry', 'assets/stand1_front01_boy_hungry.png');
   this.load.image('fukidashi', 'assets/fukidashi.png');
+
+  this.load.audio('bgm', 'assets/baby-hero.mp3');
 }
 
 function chooseWhatToEat(scene: Phaser.Scene) {
@@ -168,6 +170,9 @@ function create(this: Phaser.Scene) {
   }
 
   fruits = this.physics.add.group(fs);
+
+  const bgm = this.sound.add('bgm', { loop: true });
+  bgm.play();
 
   chooseWhatToEat(this);
 }
