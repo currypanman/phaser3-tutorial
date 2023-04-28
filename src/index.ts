@@ -19,6 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 const game: Phaser.Game = new Phaser.Game(config);
 let fruits: Phaser.Physics.Arcade.Group;
+let fruitHomePos = new Map<Phaser.Physics.Arcade.Sprite, [number, number]>();
 let nextFruit: Phaser.Physics.Arcade.Sprite | null = null;
 
 function preload(this: Phaser.Scene) {
@@ -92,6 +93,7 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
         fruits.children.iterate(fruit => {
           if (fruit instanceof Phaser.Physics.Arcade.Sprite) {
             fruit.enableBody(true, x, 100, true, true);
+            fruitHomePos.set(fruit, [x, 100]);
             fruit.setInteractive({ draggable: true });
             scene.tweens.add({
               targets: fruit,
@@ -105,6 +107,19 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
       }
       chooseWhatToEat(scene);
     }
+  });
+}
+
+function returnFruit(fruit: Phaser.Physics.Arcade.Sprite, scene: Phaser.Scene) {
+  const [x, y] = fruitHomePos.get(fruit);
+  if (scene.tweens.isTweening(fruit)) {
+    return;
+  }
+  scene.tweens.add({
+    targets: fruit,
+    x: x, y: y,
+    ease: Phaser.Math.Easing.Cubic.InOut,
+    duration: 500
   });
 }
 
@@ -140,10 +155,12 @@ function create(this: Phaser.Scene) {
   let x = 100;
   for (const asset of assets) {
     const fruit = this.physics.add.sprite(x, 100, asset);
+    fruitHomePos.set(fruit, [x, 100]);
     fruit.setName(asset);
     fruit.setInteractive({ draggable: true });
     fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
     fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, boy, scene); });
+    fruit.on('dragend', (p: any) => { returnFruit(fruit, scene); });
     fruit.scale = 100 / fruit.width;
     fruit.setCircle(50);
     fs.push(fruit);
