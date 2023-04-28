@@ -22,15 +22,26 @@ let fruits: Phaser.Physics.Arcade.Group;
 let fruitHomePos = new Map<Phaser.Physics.Arcade.Sprite, [number, number]>();
 let nextFruit: Phaser.Physics.Arcade.Sprite | null = null;
 
+let allFruitsLabels: string[] = [];
+
+function loadFruitImage(scene: Phaser.Scene, label: string, url: string) {
+  scene.load.image(label, url);
+  allFruitsLabels.push(label);
+}
+
 function preload(this: Phaser.Scene) {
   this.load.image('sky', 'assets/sky.png');
 
-  this.load.image('orange', 'assets/fruit_orange.png');
-  this.load.image('apple', 'assets/fruit_ringo.png');
-  this.load.image('strawberry', 'assets/fruit_strawberry.png');
-  this.load.image('sumomo', 'assets/fruit_sumomo.png');
-  this.load.image('younashi', 'assets/fruit_younashi.png');
-  this.load.image('kiwi', 'assets/fruit_kiwi_marugoto.png');
+  loadFruitImage(this, 'orange', 'assets/fruit_orange.png');
+  loadFruitImage(this, 'apple', 'assets/fruit_ringo.png');
+  loadFruitImage(this, 'strawberry', 'assets/fruit_strawberry.png');
+  // loadFruitImage(this, 'sumomo', 'assets/fruit_sumomo.png');
+  loadFruitImage(this, 'younashi', 'assets/fruit_younashi.png');
+  loadFruitImage(this, 'kiwi', 'assets/fruit_kiwi_marugoto.png');
+  loadFruitImage(this, 'banana', 'assets/fruit_banana.png');
+  loadFruitImage(this, 'grape', 'assets/fruit_grape_gorby.png');
+  loadFruitImage(this, 'kaki', 'assets/fruit_kaki.png');
+  loadFruitImage(this, 'suika', 'assets/fruit_suika_kodama.png');
 
   this.load.image('boy', 'assets/stand1_front01_boy.png');
   this.load.image('mogumogu', 'assets/stand1_front01_boy_mogumogu.png');
@@ -125,6 +136,23 @@ function returnFruit(fruit: Phaser.Physics.Arcade.Sprite, scene: Phaser.Scene) {
   });
 }
 
+function randomSelect(list: string[], count: number) {
+  const copy = [...list];
+  let result: string[] = [];
+
+  for (let i = 0; i < Math.min(count, list.length); ++i) {
+    const j = Math.floor(Math.random() * copy.length);
+    result.push(copy[j]);
+    const lastItem = copy.pop();
+    // copy.length is decremented by 1.
+    if (j !== copy.length) {
+      copy[j] = lastItem
+    }
+  }
+
+  return result;
+}
+
 function create(this: Phaser.Scene) {
   const scene = this;
   scene.scale.scaleMode = Phaser.Scale.FIT;
@@ -151,7 +179,7 @@ function create(this: Phaser.Scene) {
   const fukidashi = this.physics.add.image(260, 300, 'fukidashi');
   fukidashi.scale = 200 / fukidashi.width;
 
-  const assets = ['orange', 'apple', 'strawberry', 'younashi', 'kiwi'];
+  const assets = randomSelect(allFruitsLabels, 5);
 
   let fs = [];
   let x = 100;
