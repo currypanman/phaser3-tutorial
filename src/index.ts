@@ -1,5 +1,5 @@
 import 'phaser';
-import { GameObjects } from 'phaser';
+import * as assets from './assets';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -30,25 +30,25 @@ function loadFruitImage(scene: Phaser.Scene, label: string, url: string) {
 }
 
 function preload(this: Phaser.Scene) {
-  this.load.image('sky', 'assets/sky.png');
+  this.load.image('sky', assets.sky);
 
-  loadFruitImage(this, 'orange', 'assets/fruit_orange.png');
-  loadFruitImage(this, 'apple', 'assets/fruit_ringo.png');
-  loadFruitImage(this, 'strawberry', 'assets/fruit_strawberry.png');
-  // loadFruitImage(this, 'sumomo', 'assets/fruit_sumomo.png');
-  loadFruitImage(this, 'younashi', 'assets/fruit_younashi.png');
-  loadFruitImage(this, 'kiwi', 'assets/fruit_kiwi_marugoto.png');
-  loadFruitImage(this, 'banana', 'assets/fruit_banana.png');
-  loadFruitImage(this, 'grape', 'assets/fruit_grape_gorby.png');
-  loadFruitImage(this, 'kaki', 'assets/fruit_kaki.png');
-  loadFruitImage(this, 'suika', 'assets/fruit_suika_kodama.png');
-
-  this.load.image('boy', 'assets/stand1_front01_boy.png');
-  this.load.image('mogumogu', 'assets/stand1_front01_boy_mogumogu.png');
-  this.load.image('hungry', 'assets/stand1_front01_boy_hungry.png');
-  this.load.image('fukidashi', 'assets/fukidashi.png');
+  this.load.image('boy', assets.boy);
+  this.load.image('mogumogu', assets.mogumogu);
+  this.load.image('hungry', assets.hungry);
+  this.load.image('fukidashi', assets.fukidashi);
 
   this.load.audio('bgm', 'assets/baby-hero.mp3');
+
+  loadFruitImage(this, 'orange', assets.orange);
+  loadFruitImage(this, 'apple', assets.apple);
+  loadFruitImage(this, 'strawberry', assets.strawberry);
+  // loadFruitImage(this, 'sumomo', assets.sumomo);
+  loadFruitImage(this, 'younashi', assets.younashi);
+  loadFruitImage(this, 'kiwi', assets.kiwi);
+  loadFruitImage(this, 'banana', assets.banana);
+  loadFruitImage(this, 'grape', assets.grape);
+  loadFruitImage(this, 'kaki', assets.kaki);
+  loadFruitImage(this, 'suika', assets.suika);
 }
 
 function chooseWhatToEat(scene: Phaser.Scene) {

@@ -11,6 +11,10 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.png$/,
+        type: 'asset/resource',
+      },
     ],
   },
   resolve: {
@@ -18,6 +22,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
+    assetModuleFilename: 'assets/[hash][ext][query]'
   },
   devtool: 'inline-source-map',
   devServer: {
