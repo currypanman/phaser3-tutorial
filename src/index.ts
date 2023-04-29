@@ -37,7 +37,7 @@ function preload(this: Phaser.Scene) {
   this.load.image('hungry', assets.hungry);
   this.load.image('fukidashi', assets.fukidashi);
 
-  this.load.audio('bgm', 'assets/baby-hero.mp3');
+  this.load.audio('bgm', assets.bgm);
 
   loadFruitImage(this, 'orange', assets.orange);
   loadFruitImage(this, 'apple', assets.apple);
