@@ -49,6 +49,14 @@ function preload(this: Phaser.Scene) {
   loadFruitImage(this, 'grape', assets.grape);
   loadFruitImage(this, 'kaki', assets.kaki);
   loadFruitImage(this, 'suika', assets.suika);
+
+  loadFruitImage(this, 'nasu', assets.nasu);
+  loadFruitImage(this, 'paprika', assets.paprika);
+  loadFruitImage(this, 'piman', assets.piman);
+  loadFruitImage(this, 'cabbege', assets.cabbege);
+  loadFruitImage(this, 'kabocha', assets.kabocha);
+  loadFruitImage(this, 'myouga', assets.myouga);
+  loadFruitImage(this, 'tamanegi', assets.tamanegi);
 }
 
 function chooseWhatToEat(scene: Phaser.Scene) {
