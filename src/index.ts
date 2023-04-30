@@ -13,14 +13,23 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   scene: {
     preload: preload,
-    create: create
+    create: create,
+    update: update
   }
 };
 
 const game: Phaser.Game = new Phaser.Game(config);
+const worldRect = new Phaser.Geom.Rectangle(0, 0, 800, 450);
+
 let fruits: Phaser.Physics.Arcade.Group;
 let fruitHomePos = new Map<Phaser.Physics.Arcade.Sprite, [number, number]>();
 let nextFruit: Phaser.Physics.Arcade.Sprite | null = null;
+let fukidashi: Phaser.Physics.Arcade.Image | null = null;
+
+let defaultLayer: Phaser.GameObjects.Layer | null = null;
+
+let bonus: Phaser.Physics.Arcade.Sprite | null = null;
+let bonusStage: boolean = false;
 
 let allFruitsLabels: string[] = [];
 
@@ -144,7 +153,8 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
       if (fruits.countActive(true) == 0) {
         fruits.clear(true, true);
         fruitHomePos = new Map<Phaser.Physics.Arcade.Sprite, [number, number]>();
-        initializeFruits(scene);
+        enterBonusStage(scene);
+        return;
       }
       chooseWhatToEat(scene);
     }
@@ -181,11 +191,44 @@ function randomSelect(list: string[], count: number) {
   return result;
 }
 
+function enterBonusStage(scene: Phaser.Scene) {
+  nextFruit.setVisible(false);
+  fukidashi.setVisible(false);
+  scene.tweens.add({
+    targets: defaultLayer,
+    alpha: 0.6,
+    duration: 100
+  });
+  bonus = scene.physics.add.sprite(-70, 150, 'bonus');
+  bonus.scale = 150 / bonus.width;
+  bonus.setVelocity(75, 0);
+  bonus.setInteractive();
+  bonus.on('pointerdown', (p: any) => {
+    const r = (Math.random() * 2 - 1) * Math.PI / 2;
+    bonus.setVelocity(Math.cos(r) * 75, Math.sin(r) * 75);
+  });
+  bonusStage = true;
+}
+
+function exitBonusStage(scene: Phaser.Scene) {
+  fukidashi.setVisible(true);
+  scene.tweens.add({
+    targets: defaultLayer,
+    alpha: 1,
+    duration: 100
+  });
+  bonusStage = false;
+  defaultLayer.setAlpha(1.0);
+  initializeFruits(scene);
+  chooseWhatToEat(scene);
+}
+
 function create(this: Phaser.Scene) {
   const scene = this;
   scene.scale.scaleMode = Phaser.Scale.FIT;
   scene.scale.setParentSize(window.innerWidth, window.innerHeight);
-  this.add.image(400, 300, 'sky');
+
+  const sky = this.add.image(400, 300, 'sky');
 
   const boy = this.physics.add.sprite(400, 350, 'boy');
   boy.setInteractive({ dropZone: true });
@@ -204,8 +247,10 @@ function create(this: Phaser.Scene) {
     repeat: 0
   });
 
-  const fukidashi = this.physics.add.image(260, 300, 'fukidashi');
+  fukidashi = this.physics.add.image(260, 300, 'fukidashi');
   fukidashi.scale = 200 / fukidashi.width;
+
+  defaultLayer = scene.add.layer([sky, boy, fukidashi]);
 
   initializeFruits(this);
 
@@ -213,4 +258,14 @@ function create(this: Phaser.Scene) {
   bgm.play();
 
   chooseWhatToEat(this);
+}
+
+function update(this: Phaser.Scene) {
+  if (bonusStage && bonus !== null) {
+    const bonusRect = bonus.getBounds();
+    if (!Phaser.Geom.Rectangle.ContainsRect(worldRect, bonusRect)
+        && Phaser.Geom.Intersects.GetRectangleToRectangle(bonusRect, worldRect).length == 0) {
+      exitBonusStage(this);
+    }
+  }
 }
