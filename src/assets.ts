@@ -18,9 +18,18 @@ import grape from './assets/fruit_grape_gorby.png';
 import kaki from './assets/fruit_kaki.png';
 import suika from './assets/fruit_suika_kodama.png';
 
+import nasu from './assets/nasu_eggplant.png';
+import paprika from './assets/paprika.png';
+import piman from './assets/piman_greenpepper.png';
+import cabbege from './assets/vegetable_cabbage2.png';
+import kabocha from './assets/vegetable_kabocha.png';
+import myouga from './assets/vegetable_myouga.png';
+import tamanegi from './assets/vegetable_tamanegi.png';
+
 export { sky };
 export { boy, mogumogu, hungry, fukidashi };
 export { bgm };
 export {
-  orange, apple, strawberry, younashi, kiwi, banana, grape, kaki, suika
+  orange, apple, strawberry, younashi, kiwi, banana, grape, kaki, suika,
+  nasu, paprika, piman, cabbege, kabocha, myouga, tamanegi
 };
