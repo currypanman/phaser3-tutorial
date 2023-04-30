@@ -37,6 +37,8 @@ function preload(this: Phaser.Scene) {
   this.load.image('hungry', assets.hungry);
   this.load.image('fukidashi', assets.fukidashi);
 
+  this.load.image('bonus', assets.bonus);
+
   this.load.audio('bgm', assets.bgm);
 
   loadFruitImage(this, 'orange', assets.orange);
@@ -59,9 +61,39 @@ function preload(this: Phaser.Scene) {
   loadFruitImage(this, 'tamanegi', assets.tamanegi);
 }
 
+function initializeFruits(scene: Phaser.Scene) {
+  const assets = randomSelect(allFruitsLabels, 5);
+
+  let fs = [];
+  let x = 100;
+  for (const asset of assets) {
+    const fruit = scene.physics.add.sprite(x, 100, asset);
+    fruitHomePos.set(fruit, [x, 100]);
+    fruit.setName(asset);
+    fruit.setInteractive({ draggable: true });
+    fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
+    fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, boy, scene); });
+    fruit.on('dragend', (p: any) => { returnFruit(fruit, scene); });
+    fruit.scale = 0;
+    scene.tweens.add({
+      targets: fruit,
+      scale: 100 / fruit.width,
+      duration: 250
+    })
+    fruit.setCircle(50);
+    fs.push(fruit);
+    x += 150;
+  }
+
+  fruits = scene.physics.add.group(fs);
+}
+
 function chooseWhatToEat(scene: Phaser.Scene) {
 
   function setNextFruit(nextFruitName: string) {
+    if (nextFruit) {
+      nextFruit.destroy();
+    }
     nextFruit = scene.physics.add.sprite(250, 250, nextFruitName);
     nextFruit.name = nextFruitName;
     nextFruit.scale = 0;
@@ -110,21 +142,9 @@ function eatFruit(fruit: Phaser.Physics.Arcade.Sprite, boy: Phaser.Physics.Arcad
     onComplete: () => {
       fruit.disableBody(true, true);
       if (fruits.countActive(true) == 0) {
-        let x = 100;
-        fruits.children.iterate(fruit => {
-          if (fruit instanceof Phaser.Physics.Arcade.Sprite) {
-            fruit.enableBody(true, x, 100, true, true);
-            fruitHomePos.set(fruit, [x, 100]);
-            fruit.setInteractive({ draggable: true });
-            scene.tweens.add({
-              targets: fruit,
-              scale: 100 / fruit.width,
-              duration: 250
-            });
-            x += 150;
-          }
-          return true;
-        })
+        fruits.clear(true, true);
+        fruitHomePos = new Map<Phaser.Physics.Arcade.Sprite, [number, number]>();
+        initializeFruits(scene);
       }
       chooseWhatToEat(scene);
     }
@@ -187,25 +207,7 @@ function create(this: Phaser.Scene) {
   const fukidashi = this.physics.add.image(260, 300, 'fukidashi');
   fukidashi.scale = 200 / fukidashi.width;
 
-  const assets = randomSelect(allFruitsLabels, 5);
-
-  let fs = [];
-  let x = 100;
-  for (const asset of assets) {
-    const fruit = this.physics.add.sprite(x, 100, asset);
-    fruitHomePos.set(fruit, [x, 100]);
-    fruit.setName(asset);
-    fruit.setInteractive({ draggable: true });
-    fruit.on('drag', (p: any, x: number, y: number) => fruit.setPosition(x, y));
-    fruit.on('drop', (p: any, boy: any) => { eatFruit(fruit, boy, scene); });
-    fruit.on('dragend', (p: any) => { returnFruit(fruit, scene); });
-    fruit.scale = 100 / fruit.width;
-    fruit.setCircle(50);
-    fs.push(fruit);
-    x += 150;
-  }
-
-  fruits = this.physics.add.group(fs);
+  initializeFruits(this);
 
   const bgm = this.sound.add('bgm', { loop: true });
   bgm.play();

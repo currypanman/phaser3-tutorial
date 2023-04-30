@@ -5,6 +5,9 @@ import mogumogu from './assets/stand1_front01_boy_mogumogu.png';
 import hungry from './assets/stand1_front01_boy_hungry.png';
 import fukidashi from './assets/fukidashi.png';
 
+// Bonus charactor.
+import bonus from './assets/clin.png';
+
 import bgm from './assets/baby-hero.mp3';
 
 import orange from './assets/fruit_orange.png';
@@ -28,6 +31,7 @@ import tamanegi from './assets/vegetable_tamanegi.png';
 
 export { sky };
 export { boy, mogumogu, hungry, fukidashi };
+export { bonus };
 export { bgm };
 export {
   orange, apple, strawberry, younashi, kiwi, banana, grape, kaki, suika,
