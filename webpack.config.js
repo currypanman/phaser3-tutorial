@@ -1,6 +1,7 @@
 module.exports = {
   mode: 'development',
   entry: {
+    connect: './src/connect.ts',
     index: './src/index.ts',
     tutorial: './src/tutorial.js',
   },
